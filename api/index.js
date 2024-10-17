@@ -91,6 +91,12 @@ app.get('/profile', (req, res) => {
 // we can return a 401 status code with an error message. If it is truthy, we can call `jwt.verify`
 // as before.
 
+
+app.post('/logout', (req, res) => {
+    res.cookie('token', '').json(true)
+
+})
+
 app.listen(4000, () => {
     console.log('Server started on port 4000')
 })

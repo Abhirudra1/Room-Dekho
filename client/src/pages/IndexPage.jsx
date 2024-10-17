@@ -4,7 +4,7 @@ function IndexPage() {
     return ( 
         <div>
 
-        asdhgukjasd
+        <p>Index Page</p>
 
     </div>
      );
