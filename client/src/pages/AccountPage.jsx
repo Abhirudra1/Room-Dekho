@@ -2,7 +2,7 @@ import { useContext, useState } from "react"
 import { UserContext } from "../UserContext"
 import { Link, Navigate, useParams } from "react-router-dom"
 import axios from "axios"
-import PlacePage from "./PlacePage"
+import PlacePage from "./PlacesPage"
 
 
 export default function AccountPage() {
