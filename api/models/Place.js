@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 
 const placeSchema = new mongoose.Schema({
     owner: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
-    name: String,
+    title: String,
     address: String,
     photos: [String],
     description: String,
@@ -11,7 +11,6 @@ const placeSchema = new mongoose.Schema({
     checkIn: Number,
     checkOut: Number,
     maxGuests: Number,
-    price: Number,
 })
 
 module.exports = mongoose.model('Place', placeSchema)

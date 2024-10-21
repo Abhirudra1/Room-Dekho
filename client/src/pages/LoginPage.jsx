@@ -34,11 +34,11 @@ export default function LoginPage() {
         <div className="mb-32">
             <h1 className="text-4xl text-center m-4">Login</h1>
             <form className="max-w-md mx-auto space-y-3" onSubmit={handleLoginSubmit}>
-                <input type="email" placeholder="youremail@gmail.com" 
+                <input type="email" placeholder="youremail@gmail.com" autoComplete="email"
                 value={email} 
                 onChange={ev => setEmail(ev.target.value) } />
-                <input type="password" placeholder="Enter Your Password"
-                value={password}
+                <input type="password" placeholder="Enter Your Password" autoComplete="current-password"
+                value={password} 
                 onChange={ev => setPassword(ev.target.value)} />
 
                 <button className="primary">Login</button>

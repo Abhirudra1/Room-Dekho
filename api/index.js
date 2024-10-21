@@ -4,6 +4,7 @@ const mongoose = require('mongoose')
 const User = require('./models/User')
 const jwt = require('jsonwebtoken')
 const cookieParser = require('cookie-parser')
+const Place = require('./models/Place')
 const imageDownloader = require('image-downloader');
 const multer = require('multer');
 const bcrypt = require('bcryptjs');
@@ -123,6 +124,71 @@ app.post('/upload', photosMiddleware.array('photos', 100), (req, res) => {
     }
     res.json(uploadedFiles);
 })
+
+
+// app.post('/places', (req, res)=>{
+//     const token = req.cookies;
+//     const {title, address, photos, description,
+//          perks, extraInfo, checkIn, 
+//          checkOut, maxGuests} = req.body;
+//     jwt.verify(token, jwtSecret, {},async (err, userData) => {
+//         if (err) {
+//             console.error(err);
+//             res.status(401).json({ message: 'Invalid token' });
+//         } else {
+//             const placeDoc = await Place.create({
+//                 owner: userData.id,
+//                 title, address, photos, description,
+//                 perks, extraInfo, checkIn, 
+//                 checkOut, maxGuests
+//             })
+//             res.json(placeDoc)
+//         }
+//     })
+// })
+
+
+
+app.post('/places', (req,res) => {
+    // mongoose.connect(process.env.MONGO_URL);
+    // const {title, address, addedPhotos, description,
+    //   perks, extraInfo, checkIn, 
+    //   checkOut, maxGuests} = req.body;
+    // const {token} = req.cookies;
+    // jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+    //   if (err) throw err;
+    //   const placeDoc = await Place.create({
+    //     owner:userData.id,
+    //     title,address,photos:addedPhotos,description,
+    //     perks,extraInfo,checkIn,checkOut,maxGuests,
+    //   });
+    //   res.json(placeDoc);
+    // });
+
+
+    const {title, address, addedPhotos, description,
+        perks, extraInfo, checkIn, 
+        checkOut, maxGuests} = req.body;
+    const {token}  = req.cookies;
+    if (!token) {
+        res.json(null)
+    } else {
+        jwt.verify(token, jwtSecret, {},async (err, userData) => {
+            if (err) {
+                console.error(err);
+                res.status(401).json({ message: 'Invalid token' });
+            } else {
+                const placeDoc = await Place.create({
+                    owner:userData.id,
+                    title,address,photos:addedPhotos,description,
+                    perks,extraInfo,checkIn,checkOut,maxGuests,
+                  });
+                  res.json(placeDoc);
+            }
+        })
+    }
+  });
+
 
 app.listen(4000, () => {
     console.log('Server started on port 4000')
