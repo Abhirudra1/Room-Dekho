@@ -1,1 +1,8 @@
-node_modules
+# See https://help.github.com/en/articles/ignoring-files#create-a-gitignore-file
+# Ignore node_modules and .env files
+
+# Ignore node_modules
+/node_modules/
+
+# Ignore .env file
+.env

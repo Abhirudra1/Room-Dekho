@@ -5,11 +5,13 @@ const User = require('./models/User')
 const jwt = require('jsonwebtoken')
 const cookieParser = require('cookie-parser')
 const imageDownloader = require('image-downloader');
+const Place = require('./models/Place')
 const multer = require('multer');
 const bcrypt = require('bcryptjs');
 require('dotenv').config()
 const app = express()
 const fs = require('fs')
+
 
 const bcryptSalt = bcrypt.genSaltSync(10);
 const jwtSecret = 'asdjkgjasdgfjksgd545d4fgawse2354r23w@45323asdfc'
@@ -26,8 +28,15 @@ app.use(cors({
 
 
 // MongoDB connection
-mongoose.connect(process.env.MONGO_URL)
-const db = mongoose.connection
+mongoose.connect(process.env.MONGO_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+}).then(()=>{
+    console.log("MongoDB connected")
+}).catch((err)=>{
+    console.log(err)
+})
+
 
 app.get('/test', (req, res) => {
     res.json('Hello World!')  
@@ -41,9 +50,15 @@ app.post('/register',async (req, res) => {
             email, 
             password:bcrypt.hashSync(password, bcryptSalt),
         })
-        res.json(userDoc)
-    } catch(e){
-        res.status(422).json(e);
+        jwt.sign({email, id: userDoc._id}, jwtSecret, {}, (err, token) => {
+            if (err) throw err
+            res.cookie('token', token, {
+                sameSite: 'none',
+                secure: true
+            }).status(201).json({userDoc, token})
+        })
+    } catch(error){
+        res.status(500).json(error);
     }
 })
 
@@ -51,16 +66,17 @@ app.post('/login', async (req, res) => {
     const { email, password } = req.body;
     const userDoc = await User.findOne({ email });
     if (userDoc) {
-        const passOk = await bcrypt.compare(password, userDoc.password);
+        const passOk = bcrypt.compare(password, userDoc.password);
         if (passOk) {
-            jwt.sign({
+            const token = jwt.sign({
                 email: userDoc.email,
                 id: userDoc._id, 
                 // name: userDoc.name
-            },  jwtSecret, {}, (err, token) => {
-                if (err) throw err;
-                res.cookie('token', token).json(userDoc);
-            })
+            },  jwtSecret, {});
+            res.cookie('token', token, {
+                sameSite: 'none',
+                secure: true,
+            }).json(userDoc);
         } else {
             res.status(422).json('Wrong password')
         }
@@ -71,9 +87,7 @@ app.post('/login', async (req, res) => {
 
 app.get('/profile', (req, res) => {
     const {token}  = req.cookies;
-    if (!token) {
-        res.json(null)
-    } else {
+    if (token) {
         jwt.verify(token, jwtSecret, {},async (err, userData) => {
             if (err) {
                 console.error(err);
@@ -83,6 +97,8 @@ app.get('/profile', (req, res) => {
                 res.json({name, email, _id});
             }
         })
+    } else {
+        res.json(null)
     }
 })
 
@@ -97,7 +113,7 @@ app.get('/profile', (req, res) => {
 
 
 app.post('/logout', (req, res) => {
-    res.cookie('token', '').json(true)
+    res.clearCookie('token').json(true)
 })
 
 app.post('/upload-by-link', async (req, res) => {
@@ -123,6 +139,53 @@ app.post('/upload', photosMiddleware.array('photos', 100), (req, res) => {
     }
     res.json(uploadedFiles);
 })
+
+
+// app.post('/places', async (req, res) => {
+//     const {token} = req.cookies;
+//     const {title, address, addedPhotos, description, perks, extraInfo, checkIn, checkOut, maxGuests} = req.body;
+//     if (token) {
+//         try {
+//             const userData = await jwt.verify(token, jwtSecret);
+//             const placeDoc = await Place.create({
+//                 owner: userData.id,
+//                 title, address, photos: addedPhotos,
+//                 description, perks, extraInfo, checkIn, checkOut, maxGuests,
+//             });
+
+//             res.json(placeDoc);
+//         } catch (error) {
+//             console.error(error);
+//             res.status(401).json({ message: 'Invalid token' });
+//         }
+//     } else {
+//         res.status(401).json({ message: 'Unauthorized' });
+//     }
+// })
+
+
+
+app.post('/places', (req,res) => {
+    const {token} = req.cookies;
+    const {
+      title,address,addedPhotos,description,price,
+      perks,extraInfo,checkIn,checkOut,maxGuests,
+    } = req.body;
+    if(token){
+        jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+          if (err) throw err;
+          const placeDoc = await Place.create({
+            owner:userData.id,price,
+            title,address,photos:addedPhotos,description,
+            perks,extraInfo,checkIn,checkOut,maxGuests,
+          });
+          res.json(placeDoc);
+        });
+    } else{
+        return res.status(401).json({ message: 'Unauthorized' });
+    }
+  });
+
 
 app.listen(4000, () => {
     console.log('Server started on port 4000')
