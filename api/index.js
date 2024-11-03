@@ -66,7 +66,7 @@ app.post('/login', async (req, res) => {
     const { email, password } = req.body;
     const userDoc = await User.findOne({ email });
     if (userDoc) {
-        const passOk = bcrypt.compare(password, userDoc.password);
+        const passOk = bcrypt.compareSync(password, userDoc.password);
         if (passOk) {
             const token = jwt.sign({
                 email: userDoc.email,
@@ -113,7 +113,7 @@ app.get('/profile', (req, res) => {
 
 
 app.post('/logout', (req, res) => {
-    res.clearCookie('token').json(true)
+    res.clearCookie('token', {sameSite: 'none', secure: true}).json(true)
 })
 
 app.post('/upload-by-link', async (req, res) => {
@@ -141,30 +141,6 @@ app.post('/upload', photosMiddleware.array('photos', 100), (req, res) => {
 })
 
 
-// app.post('/places', async (req, res) => {
-//     const {token} = req.cookies;
-//     const {title, address, addedPhotos, description, perks, extraInfo, checkIn, checkOut, maxGuests} = req.body;
-//     if (token) {
-//         try {
-//             const userData = await jwt.verify(token, jwtSecret);
-//             const placeDoc = await Place.create({
-//                 owner: userData.id,
-//                 title, address, photos: addedPhotos,
-//                 description, perks, extraInfo, checkIn, checkOut, maxGuests,
-//             });
-
-//             res.json(placeDoc);
-//         } catch (error) {
-//             console.error(error);
-//             res.status(401).json({ message: 'Invalid token' });
-//         }
-//     } else {
-//         res.status(401).json({ message: 'Unauthorized' });
-//     }
-// })
-
-
-
 app.post('/places', (req,res) => {
     const {token} = req.cookies;
     const {
@@ -184,8 +160,21 @@ app.post('/places', (req,res) => {
     } else{
         return res.status(401).json({ message: 'Unauthorized' });
     }
-
   });
+
+
+app.get('/places', (req, res)=>{
+    const {token} = req.cookies;
+    jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+        const {id} = userData;
+        const places = await Place.find({owner:id});
+        res.json(places);
+    })
+})
+
+app.get('/places/:id', (req, res)=>{
+    res.json(req.params)
+})
 
 
 app.listen(4000, () => {
