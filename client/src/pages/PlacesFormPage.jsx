@@ -20,30 +20,51 @@ export default function PlacesFormPage() {
 
     const [redirect, setRedirect] = useState(false);
 
-    useEffect(()=>{
-        if(!id){
-            return;
+    useEffect(() => {
+        if (!id) {
+          return;
         }
-        axios.get('/places/'+id)
-    }, [id])
+        axios.get('/places/'+id).then(response => {
+           const {data} = response;
+           setTitle(data.title);
+           setAddress(data.address);
+           setAddedPhotos(data.photos);
+           setDescription(data.description);
+           setPerks(data.perks);
+           setExtraInfo(data.extraInfo);
+           setCheckIn(data.checkIn);
+           setCheckOut(data.checkOut);
+           setMaxGuests(data.maxGuests);
+        });
+      }, [id]);
 
 
-    async function addNewPlace(ev) {
+    async function savePlace(ev) {
         ev.preventDefault();
+        const placeData = {
+            title, address, addedPhotos,
+            description, perks, extraInfo,
+            checkIn, checkOut, maxGuests,
+        }
         try {
-            const response = await axios.post('/places', {
-                title, address, addedPhotos,
-                description, perks, extraInfo,
-                checkIn, checkOut, maxGuests,
-            });
-            if (response.status === 200) {
-                setRedirect(true);
-            } else if (response.status === 401) {
-                alert('Invalid token or unauthorized');
-            } else if (response.status === 422) {
-                alert('Failed to create place');
-            } else {
-                console.error('Failed to create place:', response);
+            if(id){
+                // update
+                await axios.put('/places', {
+                    id, ...placeData
+                })
+                setRedirect(true)
+            } else{
+                // new place
+                const response = await axios.post('/places', placeData);
+                if (response.status === 200) {
+                    setRedirect(true);
+                } else if (response.status === 401) {
+                    alert('Invalid token or unauthorized');
+                } else if (response.status === 422) {
+                    alert('Failed to create place');
+                } else {
+                    console.error('Failed to create place:', response);
+                }
             }
         } catch (error) {
             console.error('Error creating place:', error);
@@ -57,7 +78,7 @@ export default function PlacesFormPage() {
     return (
         <div>
             <AccountNav />
-            <form onSubmit={addNewPlace}>
+            <form onSubmit={savePlace}>
                 <h2 className="text-2xl mt-4">Title</h2>
                 <input
                 type="text"

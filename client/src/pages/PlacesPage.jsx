@@ -28,11 +28,11 @@ export default function PlacesPage() {
                     </Link>
                 </div>
                 <div className="mt-4">
-                    {places.length>0 && places.map(place => (
-                        <Link to={'/account/places/'+place._id} className="flex gap-4 bg-gray-200 p-4 rounded-2xl mb-3">
-                            <div className="w-32 h-32 bg-gray-300 grow-0 shrink-0">
+                    {places.length>0 && places.map((place, index) => (
+                        <Link key={index} to={'/account/places/'+place._id} className="flex gap-4 bg-gray-200 p-4 rounded-2xl mb-3">
+                            <div className="flex w-32 h-32 bg-gray-300 grow-0 shrink-0">
                                 {place.photos.length > 0 && (
-                                    <img src={place.photos[0]} alt="" />
+                                    <img className="object-cover" src={'http://localhost:4000/uploads/'+place.photos[0]} alt="" />
                                 )}
                             </div>
                             <div className="grow-0 shrink">
