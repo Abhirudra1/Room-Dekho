@@ -17,6 +17,7 @@ export default function PlacesFormPage() {
     const [checkIn, setCheckIn] = useState('')
     const [checkOut, setCheckOut] = useState('')
     const [maxGuests, setMaxGuests] = useState(1)
+    const [price, setPrice] = useState(100);
 
     const [redirect, setRedirect] = useState(false);
 
@@ -35,6 +36,7 @@ export default function PlacesFormPage() {
            setCheckIn(data.checkIn);
            setCheckOut(data.checkOut);
            setMaxGuests(data.maxGuests);
+           setPrice(data.price);
         });
       }, [id]);
 
@@ -44,7 +46,7 @@ export default function PlacesFormPage() {
         const placeData = {
             title, address, addedPhotos,
             description, perks, extraInfo,
-            checkIn, checkOut, maxGuests,
+            checkIn, checkOut, maxGuests, price
         }
         try {
             if(id){
@@ -112,34 +114,43 @@ export default function PlacesFormPage() {
                 onChange={(ev) => setExtraInfo(ev.target.value)}
                 />
                 <h3 className="text-2xl mt-4">Check in & out times</h3>
-                <div className="grid sm:grid-cols-3 gap-2">
-                <div>
-                    <h3 className="mt-2 -mb-1">Check in time</h3>
-                    <input
-                    type="text"
-                    value={checkIn}
-                    onChange={(ev) => setCheckIn(ev.target.value)}
-                    placeholder="14:00"
-                    />
-                </div>
-                <div>
-                    <h3 className="mt-2 -mb-1">Check out time</h3>
-                    <input
-                    type="text"
-                    value={checkOut}
-                    onChange={(ev) => setCheckOut(ev.target.value)}
-                    placeholder="11:00"
-                    />
-                </div>
-                <div>
-                    <h3 className="mt-2 -mb-1">Max number of guests</h3>
-                    <input
-                    type="number"
-                    value={maxGuests}
-                    onChange={(ev) => setMaxGuests(ev.target.value)}
-                    placeholder="4"
-                    />
-                </div>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                    <div>
+                        <h3 className="mt-2 -mb-1">Check in time</h3>
+                        <input
+                        type="text"
+                        value={checkIn}
+                        onChange={(ev) => setCheckIn(ev.target.value)}
+                        placeholder="14:00"
+                        />
+                    </div>
+                    <div>
+                        <h3 className="mt-2 -mb-1">Check out time</h3>
+                        <input
+                        type="text"
+                        value={checkOut}
+                        onChange={(ev) => setCheckOut(ev.target.value)}
+                        placeholder="11:00"
+                        />
+                    </div>
+                    <div>
+                        <h3 className="mt-2 -mb-1">Max number of guests</h3>
+                        <input
+                        type="number"
+                        value={maxGuests}
+                        onChange={(ev) => setMaxGuests(ev.target.value)}
+                        placeholder="4"
+                        />
+                    </div>
+                    <div>
+                        <h3 className="mt-2 -mb-1">Price per night</h3>
+                        <input
+                        type="number"
+                        value={price}
+                        onChange={(ev) => setPrice(ev.target.value)}
+                        placeholder="4"
+                        />
+                    </div>
                 </div>
                 <button className="primary mt-6 mb-8">Save</button>
             </form>

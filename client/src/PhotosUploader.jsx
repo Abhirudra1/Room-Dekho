@@ -41,7 +41,7 @@ export default function PhotosUploader({addedPhotos, onChange}) {
       // const addedPhotosWithoutSelected = addedPhotos.filter(photo => photo !== filename);
       // const newAddedPhotos = [filename, ...addedPhotosWithoutSelected]
       // onChange(newAddedPhotos)
-      onChange([filename,...addedPhotos.filter(photo => photo !== filename)]);
+      onChange([filename,...addedPhotos.filter(photo => photo !== filename)]); 
     }
 
   return (
