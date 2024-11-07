@@ -2,6 +2,7 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom'
+import BookingWidget from '../BookingWidget';
 
 export default function PlacePage() {
     const {id} = useParams();
@@ -43,7 +44,7 @@ export default function PlacePage() {
     }
 
     return (
-        <div className='mt-8 bg-gray-100 -mx-8 px-9 py-8'>
+        <div className='mt-8 bg-gray-100 -mx-8 px-9 pt-8'>
             <h1 className='text-3xl'>{place.title}</h1>
             <a className='flex gap-1 my-3 font-semibold underline' target='_blank' href={'https://maps.google.com/?q='+place.address}>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
@@ -57,17 +58,17 @@ export default function PlacePage() {
                     <div>
                         {place.photos?.[0] && (
                             <div>
-                                <img className='aspect-square object-cover' src={'http://localhost:4000/uploads/'+place.photos[0]} alt="" />
+                                <img onClick={() => setShowAllPhotos(true)} className='aspect-square object-cover cursor-pointer' src={'http://localhost:4000/uploads/'+place.photos[0]} alt="" />
                             </div>
                         )}
                     </div>
                     <div className='grid'>
                         {place.photos?.[1] && (
-                            <img className='aspect-square object-cover' src={'http://localhost:4000/uploads/'+place.photos[1]} alt="" />
+                            <img onClick={() => setShowAllPhotos(true)} className='aspect-square object-cove cursor-pointerr' src={'http://localhost:4000/uploads/'+place.photos[1]} alt="" />
                         )}
                         <div className='overflow-hidden'>
                             {place.photos?.[2] && (
-                                <img className='aspect-square object-cover relative top-2' src={'http://localhost:4000/uploads/'+place.photos[2]} alt="" />
+                                <img onClick={() => setShowAllPhotos(true)} className='aspect-square object-cover cursor-pointer relative top-2' src={'http://localhost:4000/uploads/'+place.photos[2]} alt="" />
                             )}
                         </div>
                     </div>
@@ -80,6 +81,27 @@ export default function PlacePage() {
                         Show more photos
                     </button>
                 )}
+            </div>
+            
+            <div className='grid p-2 gap-8 mt-4 mb-8 grid-cols-1 md:grid-cols-[2fr_1fr]'>
+                <div>
+                    <div className='my-4'>
+                        <h2 className='font-semibold text-2xl'>Description</h2>
+                        {place.description}
+                    </div>
+                    Check-in: {place.checkIn} PM <br/>
+                    Check-out: {place.checkOut} AM <br/>
+                    Max number of guests: {place.maxGuests}
+                </div>
+                <div>
+                    <BookingWidget place={place} />
+                </div>
+            </div>
+            <div className='bg-white -mx-8 px-8 py-8 border-t'>
+                <div>
+                    <h2 className='font-semibold text-2xl'>Extra info</h2>
+                </div>
+                <div className="mb-4 mt-2 text-sm text-gray-700 leading-5">{place.extraInfo}</div>
             </div>
         </div>
     )
