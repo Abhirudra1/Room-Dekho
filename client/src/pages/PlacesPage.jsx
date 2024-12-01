@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-key */
 
 import { Link} from "react-router-dom";
 import AccountNav from "../AccountNav";

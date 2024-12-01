@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken')
 const cookieParser = require('cookie-parser')
 const imageDownloader = require('image-downloader');
 const Place = require('./models/Place')
+const Booking = require('./models/Booking')
 const multer = require('multer');
 const bcrypt = require('bcryptjs');
 require('dotenv').config()
@@ -204,6 +205,20 @@ app.get('/places', async (req, res)=>{
 app.get('/places/:id', async (req, res)=>{
     const {id} = req.params;
     res.json(await Place.findById(id));
+})
+
+app.post('/bookings', (req, res) =>{
+    const {
+        place, checkIn, checkOut, numberOfGuests, 
+        name, phone, price } =req.body;
+        Booking.create({
+            place, checkIn, checkOut,numberOfGuests,
+            name, phone, price
+        }).then((doc) =>{
+            res.json(doc)
+        }).catch((err) =>{
+            throw err;
+        })
 })
 
 app.listen(4000, () => {
