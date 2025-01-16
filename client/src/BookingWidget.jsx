@@ -21,13 +21,13 @@ export default function BookingWidget({place}) {
             setName(user.name)
         }
     }, [user])
+
+
     
     let numberOfNights = 0;
     if(checkIn && checkOut){
         numberOfNights = differenceInCalendarDays(new Date(checkOut),new Date(checkIn))
     }
-
-
 
     async function bookThisPlace() {
         const response = await axios.post('/bookings', {
@@ -56,12 +56,14 @@ export default function BookingWidget({place}) {
                                     <label htmlFor="checkIn">Check-in: </label>
                                     <input type="date" id='checkIn' 
                                             value={checkIn} 
+                                            required
                                             onChange={ev => setCheckIn(ev.target.value)} />
                                 </div>
                                 <div className='py-3 px-4 border-l'>
                                     <label htmlFor="checkOut">Check-out: </label>
                                     <input type="date" id='checkOut' 
                                             value={checkOut} 
+                                            required
                                             onChange={ev => setCheckOut(ev.target.value)} />
                                 </div>
                             </div>
@@ -83,15 +85,32 @@ export default function BookingWidget({place}) {
                                             onChange={ev => setPhone(ev.target.value)} />
                                 </div>
                             )}
+                            {/* {warning && <div className='text-red-500'>{warning}</div>} */}
                         </div>
-                        <button onClick={bookThisPlace} className='primary mt-4'>
+                        {
+                            checkIn && checkOut && numberOfGuests > 0 && name && (phone.length==10) && (
+                                <div className='mt-4'>
+                                    <button onClick={bookThisPlace} className="primary mt-4"><span>Book this place: &#8377;{numberOfNights * place.price}</span></button>
+                                </div>
+                            )
+                        }
+
+                            {/* {checkIn && checkOut && <button onClick={bookThisPlace} className='primary mt-4'>
                             Book this place
                             {numberOfNights > 0 && (
                                 <span> &#8377;{numberOfNights * place.price}</span>
                             )
-
                             }
-                        </button>
+                        </button>} */}
+
+                        {/* <button onClick={bookThisPlace} className='primary mt-4'>
+                            Book this place
+                            
+                            {numberOfNights > 0 && (
+                                <span> &#8377;{numberOfNights * place.price}</span>
+                            )
+                            }
+                        </button> */}
                     </div>
     </>
   )

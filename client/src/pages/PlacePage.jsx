@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom'
 import BookingWidget from '../BookingWidget';
+import Image from '../Image';
 
 export default function PlacePage() {
     const {id} = useParams();
@@ -35,7 +36,7 @@ export default function PlacePage() {
                     </div>
                     {place?.photos?.length > 0 && place.photos.map((photo, index) =>(
                         <div key={index}>
-                            <img src={'http://localhost:4000/uploads/'+photo} alt="" />
+                            <Image src={photo} alt="" />
                         </div>
                     ))}
                 </div>
@@ -58,17 +59,17 @@ export default function PlacePage() {
                     <div>
                         {place.photos?.[0] && (
                             <div>
-                                <img onClick={() => setShowAllPhotos(true)} className='aspect-square object-cover cursor-pointer' src={'http://localhost:4000/uploads/'+place.photos[0]} alt="" />
+                                <Image onClick={() => setShowAllPhotos(true)} className='aspect-square object-cover cursor-pointer' src={place.photos[0]} alt="" />
                             </div>
                         )}
                     </div>
                     <div className='grid'>
                         {place.photos?.[1] && (
-                            <img onClick={() => setShowAllPhotos(true)} className='aspect-square object-cove cursor-pointerr' src={'http://localhost:4000/uploads/'+place.photos[1]} alt="" />
+                            <Image onClick={() => setShowAllPhotos(true)} className='aspect-square object-cove cursor-pointerr' src={place.photos[1]} alt="" />
                         )}
                         <div className='overflow-hidden'>
                             {place.photos?.[2] && (
-                                <img onClick={() => setShowAllPhotos(true)} className='aspect-square object-cover cursor-pointer relative top-2' src={'http://localhost:4000/uploads/'+place.photos[2]} alt="" />
+                                <Image onClick={() => setShowAllPhotos(true)} className='aspect-square object-cover cursor-pointer relative top-2' src={place.photos[2]} alt="" />
                             )}
                         </div>
                     </div>
